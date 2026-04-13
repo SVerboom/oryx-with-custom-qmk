@@ -50,6 +50,10 @@ jobs:
 
           IFS=$'\t' read -r hash_id firmware_version change_description <<< "$response"
 
+          if [[ -z "${firmware_version}" || "${firmware_version}" == "null" ]]; then
+            firmware_version=0
+          fi
+
           firmware_version=$(printf "%.0f" "$firmware_version")
 
           if [[ -z "${change_description}" || "${change_description}" == "null" ]]; then
