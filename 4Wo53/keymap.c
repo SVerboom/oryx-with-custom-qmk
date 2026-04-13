@@ -1,21 +1,9 @@
 #include QMK_KEYBOARD_H
 #include "version.h"
-#include "features/achordion.h
 #define MOON_LED_LEVEL LED_LEVEL
 #ifndef ZSA_SAFE_RANGE
 #define ZSA_SAFE_RANGE SAFE_RANGE
 #endif
-
-bool process_record_user(uint16_t keycode, keyrecord_t* record) {
-  if (!process_achordion(keycode, record)) { return false; }
-  // Your macros ...
-
-  return true;
-}
-
-void housekeeping_task_user(void) {
-  achordion_task();
-}
 
 enum custom_keycodes {
   RGB_SLD = ZSA_SAFE_RANGE,
@@ -24,8 +12,6 @@ enum custom_keycodes {
   HSV_74_255_255,
   HSV_169_255_255,
 };
-
-
 
 #define DUAL_FUNC_0 LT(4, KC_F9)
 #define DUAL_FUNC_1 LT(6, KC_F18)
