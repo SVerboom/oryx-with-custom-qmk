@@ -43,10 +43,11 @@ jobs:
       - name: Download layout source
         id: download-layout-source
         run: |
-          response=$(curl --location 'https://oryx.zsa.io/graphql' \
+          raw_response=$(curl --location 'https://oryx.zsa.io/graphql' \
             --header 'Content-Type: application/json' \
-            --data '{"query":"query getLayout($hashId: String!, $revisionId: String!, $geometry: String) {layout(hashId: $hashId, geometry: $geometry, revisionId: $revisionId) { revision { hashId, qmkVersion, title }}}","variables":{"hashId":"${{ github.event.inputs.layout_id }}","geometry":"${{ github.event.inputs.layout_geometry }}","revisionId":"latest"}}' \
-            | jq -r '.data.layout.revision | [.hashId, (.qmkVersion // 0), .title] | @tsv')
+            --data '{"query":"query getLayout($hashId: String!, $revisionId: String!, $geometry: String) {layout(hashId: $hashId, geometry: $geometry, revisionId: $revisionId) { revision { hashId, qmkVersion, title }}}","variables":{"hashId":"${{ github.event.inputs.layout_id }}","geometry":"${{ github.event.inputs.layout_geometry }}","revisionId":"latest"}}')
+          echo "Raw GraphQL response: ${raw_response}"
+          response=$(echo "${raw_response}" | jq -r '.data.layout.revision | [.hashId, (.qmkVersion // 0), .title] | @tsv')
 
           IFS=$'\t' read -r hash_id firmware_version change_description <<< "$response"
 
