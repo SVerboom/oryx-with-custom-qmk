@@ -50,6 +50,16 @@ jobs:
 
           IFS=$'\t' read -r hash_id firmware_version change_description <<< "$response"
 
+          echo "Parsed: hash_id=${hash_id} firmware_version=${firmware_version} change_description=${change_description}"
+
+          if [[ -z "${hash_id}" || "${hash_id}" == "null" ]]; then
+            echo "Error: hash_id is empty. Full GraphQL response:"
+            curl --location 'https://oryx.zsa.io/graphql' \
+              --header 'Content-Type: application/json' \
+              --data '{"query":"query getLayout($hashId: String!, $revisionId: String!, $geometry: String) {layout(hashId: $hashId, geometry: $geometry, revisionId: $revisionId) { revision { hashId, qmkVersion, title }}}","variables":{"hashId":"${{ github.event.inputs.layout_id }}","geometry":"${{ github.event.inputs.layout_geometry }}","revisionId":"latest"}}'
+            exit 1
+          fi
+
           if [[ -z "${firmware_version}" || "${firmware_version}" == "null" ]]; then
             firmware_version=0
           fi
